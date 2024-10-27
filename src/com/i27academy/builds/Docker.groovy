@@ -6,6 +6,7 @@ class Docker {
     Docker(jenkins) {
         this.jenkins = jenkins
     }
+
     // Application Build
     def buildApp(appName){
         jenkins.sh """
@@ -17,10 +18,3 @@ class Docker {
 
 }
 
-
-def buildApp() {
-    return {
-        echo "Building the ${env.APPLICATION_NAME} Application"
-        sh 'mvn clean package -DskipTests=true'
-    }
-}
