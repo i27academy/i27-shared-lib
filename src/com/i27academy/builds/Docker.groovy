@@ -1,8 +1,9 @@
 package com.i27academy.builds
 
 // all the methods 
-class Calculator {
+class Docker {
     def jenkins
+    
     Docker(jenkins) {
         this.jenkins = jenkins
     }
