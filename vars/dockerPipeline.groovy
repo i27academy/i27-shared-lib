@@ -48,6 +48,8 @@ def call(Map pipelineParams){
         }
         environment {
             APPLICATION_NAME = "${pipelineParams.appName}"
+            HOST_PORT = "${pipelineParams.hostPort}"
+            CONT_PORT = "${pipelineParams.contPort}"
             SONAR_TOKEN = credentials('sonar_creds')
             SONAR_URL = "http://34.55.191.104:9000"
             // https://www.jenkins.io/doc/pipeline/steps/pipeline-utility-steps/#readmavenpom-read-a-maven-project-file
@@ -127,7 +129,7 @@ def call(Map pipelineParams){
                     script {
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
-                        dockerDeploy('dev', '5761', '8761').call()
+                        dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
                     }
                 }
             }
@@ -141,7 +143,7 @@ def call(Map pipelineParams){
                     script {
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
-                        dockerDeploy('tst', '6761', '8761').call()
+                        dockerDeploy('tst', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
                     }
                 }
             }
@@ -163,7 +165,7 @@ def call(Map pipelineParams){
                     script {
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
-                        dockerDeploy('stg', '7761', '8761').call()
+                        dockerDeploy('stg', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
                     }
 
                 }
@@ -187,7 +189,7 @@ def call(Map pipelineParams){
                     }
                     script {
                         //envDeploy, hostPort, contPort)
-                        dockerDeploy('prd', '8761', '8761').call()
+                        dockerDeploy('prd', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
                     }
                 }
             }
