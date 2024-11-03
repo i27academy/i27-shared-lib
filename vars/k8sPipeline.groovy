@@ -1,5 +1,6 @@
 import com.i27academy.builds.Calculator
 import com.i27academy.builds.Docker
+import com.i27academy.k8s.K8s
 
 def call(Map pipelineParams){
     // An instance of the class called calculator is created
@@ -65,6 +66,12 @@ def call(Map pipelineParams){
             DOCKER_CREDS = credentials('dockerhub_creds') //username and password
         }
         stages {
+            stage ('Authentication'){
+                steps {
+                    echo "Executing in GCP project"
+                    k8s.auth_login()
+                }
+            }
             stage ('Build') {
                 when {
                     anyOf {
@@ -238,38 +245,28 @@ def imageValidation() {
 
 
 // Method for deploying containers in diff env
-def dockerDeploy(envDeploy, hostPort, contPort){
-    return {
-        echo "Deploying to $envDeploy Environmnet"
-            withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                script {
-                    sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}\""
-                    try {
-                        // Stop the Container
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker stop ${env.APPLICATION_NAME}-$envDeploy"
-                        // Remove the Container
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker rm ${env.APPLICATION_NAME}-$envDeploy"
-                    }
-                    catch(err) {
-                        echo "Error Caught: $err"
-                    }
+// def dockerDeploy(envDeploy, hostPort, contPort){
+//     return {
+//         echo "Deploying to $envDeploy Environmnet"
+//             withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+//                 script {
+//                     sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}\""
+//                     try {
+//                         // Stop the Container
+//                         sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker stop ${env.APPLICATION_NAME}-$envDeploy"
+//                         // Remove the Container
+//                         sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker rm ${env.APPLICATION_NAME}-$envDeploy"
+//                     }
+//                     catch(err) {
+//                         echo "Error Caught: $err"
+//                     }
 
-                    // Create the container
-                    sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker run -dit --name ${env.APPLICATION_NAME}-$envDeploy -p $hostPort:$contPort ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                }   
-            }
-    }
-}
-
-
-
-// Eureka 
-// continer port" 8761
-
-// dev hp: 5761
-// tst hp: 6761
-// stg hp: 7761
-// prod hp: 8761
+//                     // Create the container
+//                     sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker run -dit --name ${env.APPLICATION_NAME}-$envDeploy -p $hostPort:$contPort ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+//                 }   
+//             }
+//     }
+// }
 
 
 
@@ -286,16 +283,5 @@ def dockerDeploy(envDeploy, hostPort, contPort){
 
 
 
-//withCredentials([usernameColonPassword(credentialsId: 'mylogin', variable: 'USERPASS')])
 
-// https://docs.sonarsource.com/sonarqube/9.9/analyzing-source-code/scanners/jenkins-extension-sonarqube/#jenkins-pipeline
 
-// sshpass -p password ssh -o StrictHostKeyChecking=no username@dockerserverip
- 
-
- //usernameVariable : String
-// Name of an environment variable to be set to the username during the build.
-// passwordVariable : String
-// Name of an environment variable to be set to the password during the build.
-// credentialsId : String
-// Credentials of an appropriate type to be set to the variable.
