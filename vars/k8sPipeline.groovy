@@ -65,6 +65,10 @@ def call(Map pipelineParams){
             POM_PACKAGING = readMavenPom().getPackaging()
             DOCKER_HUB = "docker.io/i27devopsb4"
             DOCKER_CREDS = credentials('dockerhub_creds') //username and password
+            K8S_DEV_FILE = "k8s_dev.yaml"
+            K8S_TST_FILE = "k8s_tst.yaml"
+            K8S_STG_FILE = "k8s_stg.yaml"
+            K8S_PRD_FILE = "k8s_prd.yaml"
         }
         stages {
             stage ('Authentication'){
@@ -144,7 +148,8 @@ def call(Map pipelineParams){
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
                         //dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
-                        k8s.k8sdeploy()
+                        k8s.k8sdeploy("${env.K8S_DEV_FILE}")
+                        echo "Deployed to Dev Successfully"
                     }
                 }
             }
@@ -158,7 +163,8 @@ def call(Map pipelineParams){
                     script {
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
-                        dockerDeploy('tst', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
+                        k8s.k8sdeploy("${env.K8S_TST_FILE}")
+                        echo "Deployed to Test Successfully"
                     }
                 }
             }
@@ -180,7 +186,8 @@ def call(Map pipelineParams){
                     script {
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
-                        dockerDeploy('stg', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
+                        k8s.k8sdeploy("${env.K8S_STG_FILE}")
+                        echo "Deployed to Stage Successfully"
                     }
 
                 }
@@ -204,7 +211,8 @@ def call(Map pipelineParams){
                     }
                     script {
                         //envDeploy, hostPort, contPort)
-                        dockerDeploy('prd', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
+                        k8s.k8sdeploy("${env.K8S_PRD_FILE}")
+                        echo "Deployed to Prod Successfully"
                     }
                 }
             }
