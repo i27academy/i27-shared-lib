@@ -22,8 +22,8 @@ class K8s {
     def k8sdeploy() {
         jenkins.sh """
         echo "********************* Entering into Kubernetes Deployment Method *********************"
-        sh "List of file"
-        sh "ls -la"
+        echo "Listing the files in the workspace"
+        ls -la
         """
     }
 
