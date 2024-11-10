@@ -18,6 +18,15 @@ class K8s {
         """
     }
 
+    // Method to deploy the application
+    def k8sdeploy() {
+        jenkins.sh """
+        echo "********************* Entering into Kubernetes Deployment Method *********************"
+        sh "List of file"
+        sh "ls -la"
+        """
+    }
+
 
 }
 

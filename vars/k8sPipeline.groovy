@@ -143,7 +143,8 @@ def call(Map pipelineParams){
                     script {
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
-                        dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
+                        //dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
+                        k8s.k8sdeploy()
                     }
                 }
             }
