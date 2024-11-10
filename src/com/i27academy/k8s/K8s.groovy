@@ -23,7 +23,7 @@ class K8s {
         jenkins.sh """
         echo "********************* Entering into Kubernetes Deployment Method *********************"
         echo "Listing the files in the workspace"
-        sed -i "s|DIT|${docker_image}|g" ./cicd/${fileName}
+        sed -i "s|DIT|${docker_image}|g" ./.cicd/${fileName}
         kubectl apply -f ./.cicd/${fileName}
         """
     }
