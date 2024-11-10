@@ -145,10 +145,11 @@ def call(Map pipelineParams){
                 }
                 steps {
                     script {
+                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
                         //dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
-                        k8s.k8sdeploy("${env.K8S_DEV_FILE}")
+                        k8s.k8sdeploy("${env.K8S_DEV_FILE}", docker_image)
                         echo "Deployed to Dev Successfully"
                     }
                 }
@@ -162,8 +163,9 @@ def call(Map pipelineParams){
                 steps {
                     script {
                         //envDeploy, hostPort, contPort)
+                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                         imageValidation().call()
-                        k8s.k8sdeploy("${env.K8S_TST_FILE}")
+                        k8s.k8sdeploy("${env.K8S_TST_FILE}", docker_image)
                         echo "Deployed to Test Successfully"
                     }
                 }
@@ -185,8 +187,9 @@ def call(Map pipelineParams){
                 steps {
                     script {
                         //envDeploy, hostPort, contPort)
+                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                         imageValidation().call()
-                        k8s.k8sdeploy("${env.K8S_STG_FILE}")
+                        k8s.k8sdeploy("${env.K8S_STG_FILE}", docker_image)
                         echo "Deployed to Stage Successfully"
                     }
 
@@ -211,7 +214,8 @@ def call(Map pipelineParams){
                     }
                     script {
                         //envDeploy, hostPort, contPort)
-                        k8s.k8sdeploy("${env.K8S_PRD_FILE}")
+                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                        k8s.k8sdeploy("${env.K8S_PRD_FILE}", docker_image)
                         echo "Deployed to Prod Successfully"
                     }
                 }
