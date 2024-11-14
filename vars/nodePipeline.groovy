@@ -88,7 +88,7 @@ def dockerBuildAndPush(){
     return {
         echo "************************* Building Docker image*************************"
         sh "ls -la"
-        sh "cp ${WORKSPACE}/* ./.cicd"
+        sh "cp -r ${WORKSPACE}/* ./.cicd"
         sh "ls -la ./.cicd"
         sh "docker build --no-cache -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd"
         echo "************************ Login to Docker Registry ************************"
