@@ -19,14 +19,34 @@ def call(Map pipelineParams){
                 choices: 'no\nyes',
                 description: 'This Will build dockerImage and Push'
             )
+            choice(name: 'deployToDev',
+                choices: 'no\nyes',
+                description: 'This Will deploy to Dev'
+            )
         }
 
         environment {
             APPLICATION_NAME = "${pipelineParams.appName}"
             DOCKER_HUB = "docker.io/i27devopsb4"
             DOCKER_CREDS = credentials('dockerhub_creds') //username and password
+            K8S_DEV_FILE = "k8s_dev.yaml"
+            K8S_TST_FILE = "k8s_tst.yaml"
+            K8S_STG_FILE = "k8s_stg.yaml"
+            K8S_PRD_FILE = "k8s_prd.yaml"
+            DEV_NAMESPACE = "clothing-dev-ns"
+            TST_NAMESPACE = "clothing-tst-ns"
+            STG_NAMESPACE = "clothing-stg-ns"
+            PROD_NAMESPACE = "clothing-prd-ns"
         }
         stages {
+            stage ('Authentication'){
+                steps {
+                    echo "Executing in GCP project"
+                    script {
+                        k8s.auth_login()
+                    }
+                }
+            }
             stage ('Docker Build and Push') {
                 when {
                     anyOf {
@@ -40,6 +60,23 @@ def call(Map pipelineParams){
                         dockerBuildAndPush().call()
                     }
                 } 
+            }
+            stage ('Deploy to Dev') {
+                when {
+                    expression {
+                        params.deployToDev == 'yes'
+                    }
+                }
+                steps {
+                    script {
+                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                        //envDeploy, hostPort, contPort)
+                        imageValidation().call()
+                        //dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
+                        k8s.k8sdeploy("${env.K8S_DEV_FILE}", docker_image, "${env.DEV_NAMESPACE}")
+                        echo "Deployed to Dev Successfully"
+                    }
+                }
             }
         }
     }
