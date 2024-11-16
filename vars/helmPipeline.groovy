@@ -158,7 +158,8 @@ def call(Map pipelineParams){
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
                         //dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
-                        k8s.k8sdeploy("${env.K8S_DEV_FILE}", docker_image, "${env.DEV_NAMESPACE}")
+                        k8s.k8sHelmChartDeploy()
+                        //k8s.k8sdeploy("${env.K8S_DEV_FILE}", docker_image, "${env.DEV_NAMESPACE}")
                         echo "Deployed to Dev Successfully"
                     }
                 }
@@ -269,29 +270,6 @@ def imageValidation() {
 }
 
 
-// Method for deploying containers in diff env
-// def dockerDeploy(envDeploy, hostPort, contPort){
-//     return {
-//         echo "Deploying to $envDeploy Environmnet"
-//             withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-//                 script {
-//                     sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}\""
-//                     try {
-//                         // Stop the Container
-//                         sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker stop ${env.APPLICATION_NAME}-$envDeploy"
-//                         // Remove the Container
-//                         sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker rm ${env.APPLICATION_NAME}-$envDeploy"
-//                     }
-//                     catch(err) {
-//                         echo "Error Caught: $err"
-//                     }
-
-//                     // Create the container
-//                     sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker run -dit --name ${env.APPLICATION_NAME}-$envDeploy -p $hostPort:$contPort ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-//                 }   
-//             }
-//     }
-// }
 
 
 

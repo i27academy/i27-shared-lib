@@ -1,0 +1,9 @@
+name: i27-eureka
+fullname: i27-eureka-dev
+replicas:
+  default: 1
+image: 
+  name: dummyname
+  tag: devtag
+targetPort: 8761
+
