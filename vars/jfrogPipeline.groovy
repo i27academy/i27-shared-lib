@@ -153,7 +153,8 @@ def call(Map pipelineParams){
                 }
                 steps {
                     script {
-                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                        def docker_image = "${env.JFROG_DOCKER_REGISTRY}/${env.JFROG_DOCKER_REPO_NAME}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                        //def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
                         //dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
