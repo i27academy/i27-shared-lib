@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cart-chart
+version: 0.1.0
+appVersion: 1.16.0
+type: application
+description: i27 Helm Charts for all Microservices
