@@ -23,6 +23,18 @@ def call(Map pipelineParams){
                 choices: 'no\nyes',
                 description: 'This Will deploy to Dev'
             )
+            choice(name: 'deployToTest',
+                choices: 'no\nyes',
+                description: 'This Will deploy to Test'
+            )
+            choice(name: 'deployToStage',
+                choices: 'no\nyes',
+                description: 'This Will deploy to Stage'
+            )
+            choice(name: 'deployToProd',
+                choices: 'no\nyes',
+                description: 'This Will deploy to Prod'
+            )
         }
 
         environment {
@@ -70,11 +82,69 @@ def call(Map pipelineParams){
                 steps {
                     script {
                         def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                        //envDeploy, hostPort, contPort)
                         imageValidation().call()
-                        //dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
                         k8s.k8sdeploy("${env.K8S_DEV_FILE}", docker_image, "${env.DEV_NAMESPACE}")
                         echo "Deployed to Dev Successfully"
+                    }
+                }
+            }
+            stage ('Deployed to Test') {
+                when {
+                    expression {
+                        params.deployToTest == 'yes'
+                    }
+                }
+                steps {
+                    script {
+                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                        imageValidation().call()
+                        k8s.k8sdeploy("${env.K8S_TST_FILE}", docker_image, "${env.TST_NAMESPACE}")
+                        echo "Deployed to Test Successfully"
+                    }
+                }
+            }
+            stage ('Deploy to Stage') {
+                when {
+                    allOf {
+                        anyOf {
+                            expression {
+                                params.deployToStage == 'yes'
+                                // other condition
+                            }
+                        }
+                        anyOf{
+                            branch 'release/*'
+                        }
+                    }
+                }
+                steps {
+                    script {
+                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                        imageValidation().call()
+                        k8s.k8sdeploy("${env.K8S_STG_FILE}", docker_image, "${env.STG_NAMESPACE}")
+                        echo "Deployed to Stage Successfully"
+                    }
+                }
+            }
+            stage('Deploy to Prod') {
+                when {
+                    allOf {
+                        anyOf{
+                            expression {
+                                params.deployToProd == 'yes'
+                            }
+                        }
+                        anyOf{
+                            tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}",  comparator: "REGEXP" //v1.2.3
+                        }
+                    }
+                }
+                steps {
+                    script {
+                        def docker_image = "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                        imageValidation().call()
+                        k8s.k8sdeploy("${env.K8S_PRD_FILE}", docker_image, "${env.PROD_NAMESPACE}")
+                        echo "Deployed to Prod Successfully"
                     }
                 }
             }
