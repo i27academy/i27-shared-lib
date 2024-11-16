@@ -76,6 +76,11 @@ def call(Map pipelineParams){
             JFROG_DOCKER_REGISTRY = "i27devopsb4.jfrog.io"
             JFROG_DOCKER_REPO_NAME = "cont-images-docker-docker"
             JFROG_CREDS = credentials('JFROG_CREDS')
+            HELM_PATH = "${workspace}/i27-shared-lib/chart"
+            DEV_ENV = "dev"
+            TST_ENV = "tst"
+            STAGE_ENV = "stage"
+            PROD_ENV = "prd"
 
         }
         stages {
@@ -158,7 +163,7 @@ def call(Map pipelineParams){
                         //envDeploy, hostPort, contPort)
                         imageValidation().call()
                         //dockerDeploy('dev', "${env.HOST_PORT}", "${env.CONT_PORT}").call()
-                        k8s.k8sHelmChartDeploy()
+                        k8s.k8sHelmChartDeploy("${env.APPLICATION_NAME}", "${env.DEV_ENV}", "${env.HELM_PATH}", "${GIT_COMMIT}")
                         //k8s.k8sdeploy("${env.K8S_DEV_FILE}", docker_image, "${env.DEV_NAMESPACE}")
                         echo "Deployed to Dev Successfully"
                     }
