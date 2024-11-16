@@ -43,6 +43,7 @@ class K8s {
         echo "********************* Entering into Git Clone Method *********************"
         git clone -b master https://github.com/i27academy/i27-shared-lib.git
         echo "********************* Listing the files in the workspace *********************"
+        ls -la
         """
     }
 
