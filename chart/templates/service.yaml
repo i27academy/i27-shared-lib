@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ .Values.i27-eureka-dev }}-svc" #i27-eureka-dev-svc
+  name: "{{ .Values.i27-eureka-dev }} " #i27-eureka-dev-svc
 spec:
   selector:
     app: {{ .Values.name }}
