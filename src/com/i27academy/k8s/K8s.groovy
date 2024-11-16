@@ -41,7 +41,7 @@ class K8s {
     def gitClone() {
         jenkins.sh """
         echo "********************* Entering into Git Clone Method *********************"
-        git clone -b main https://github.com/i27academy/i27-shared-lib.git
+        git clone -b master https://github.com/i27academy/i27-shared-lib.git
         echo "********************* Listing the files in the workspace *********************"
         """
     }
