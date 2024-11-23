@@ -250,12 +250,7 @@ def call(Map pipelineParams){
             }
         }
     }
-// triggr cleanws in post section of pipeline to clean the workspace after the pipeline is executed , even if the pipeline fails
-    post {
-        always {
-            cleanWs()
-        }
-    }
+
 
 }
 
