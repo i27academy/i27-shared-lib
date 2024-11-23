@@ -5,7 +5,7 @@ metadata:
   name: "{{ .Values.fullname }}-svc" #i27-eureka-dev-svc
 spec:
   selector:
-    app: {{ .Values.name }}
+    app: {{ .Values.fullname }} #i27-eureka-dev
   ports:
     - protocol: TCP
       port: 80
