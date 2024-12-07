@@ -24,7 +24,7 @@ def call(Map pipelineParams){
             SONAR_URL = "http://35.196.148.247:9000"
             SONAR_TOKEN = credentials('sonar_creds')
             DOCKER_HUB = "docker.io/i27k8s10"
-            DOCKER_CREDS = credentials('docker_creds')
+            // DOCKER_CREDS = credentials('docker_creds')
             GKE_DEV_CLUSTER_NAME = "cart-dev-ns"
             // GKE_TST_CLUSTER_NAME = "cart-tst-ns"
             // GKE_STAGE_CLUSTER_NAME = "cart-stage-ns"
