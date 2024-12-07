@@ -19,16 +19,10 @@ def call(Map pipelineParams){
         }
         environment {
             APPLICATION_NAME = "${pipelineParams.appName}"
-            //APPLICATION_NAME = "product"
-            // https://www.jenkins.io/doc/pipeline/steps/pipeline-utility-steps/#readmavenpom-read-a-maven-project-file
             SONAR_URL = "http://35.196.148.247:9000"
             SONAR_TOKEN = credentials('sonar_creds')
             DOCKER_HUB = "docker.io/i27k8s10"
-            // DOCKER_CREDS = credentials('docker_creds')
             GKE_DEV_CLUSTER_NAME = "cart-dev-ns"
-            // GKE_TST_CLUSTER_NAME = "cart-tst-ns"
-            // GKE_STAGE_CLUSTER_NAME = "cart-stage-ns"
-            // GKE_PROD_CLUSTER_NAME = "cart-prod-ns"
             GKE_DEV_ZONE = "us-central1-c"
             GKE_DEV_PROJECT = "quantum-weft-420714"
             K8S_DEV_FILE = "k8s_dev.yaml"
@@ -47,9 +41,6 @@ def call(Map pipelineParams){
             JFROG_DOCKER_REGISTRY = "flipkarrt.jfrog.io"
             JFROG_DOCKER_REPO_NAME = "cont-images-docker"
             JFROG_CREDS = credentials('JFROG_CREDS')
-            
-            // DOCKER_APPLICATION_NAME = "i27k8s10"
-            // DOCKER_HOST_IP = "1.2.3.4"
         }
         stages {
             stage ('Checkout'){
@@ -76,7 +67,19 @@ def call(Map pipelineParams){
                 }
             }
         }
+        post {
+            always {
+                echo "Cleaning up the i27-shared-lib directory"
+                script {
+                    def sharedLibPath = "${WORKSPACE}/i27-shared-lib"
+                    if (fileExists(sharedLibPath)) {
+                        echo "Deleting the shared library directory: ${sharedLibPath}"
+                        sh "rm -rf ${sharedLibPath}"
+                    } else {
+                        echo "No shared library directory found to clean up."
+                    }
+                }
+            }
+        }
     }
-
 }
-
