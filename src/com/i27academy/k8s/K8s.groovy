@@ -57,6 +57,30 @@ class K8s {
         """
     }
 
+    //  Namespace Creation
+    def namespace_creation(namespace_name){
+        jenkins.sh """#!/bin/bash
+        # Script to create namespace, if doesnot exists
+        #!/bin/bash
+        #namespace_name="boutique"
+        echo "Namespace Provided is ${namespace_name}"
+        # Validate if the namespace exists
+        if kubectl get ns "${namespace_name}" &> /dev/null ; then 
+        echo "Your Namespace '${namespace_name}' exists!!!!!!"
+        exit 0
+        else
+        echo "Your namespace '${namespace_name}' doesnot exists, so creating it!!!!!!"
+        if kubectl create ns '${namespace_name}' &> /dev/null; then
+          echo "Your namespace '${namespace_name}' has created succesfully"
+          exit 0
+        else 
+          echo "Some error , failed to create '${namespace_name}'"
+          exit 1
+        fi
+        fi
+        """
+    }
+
 }
 
 
