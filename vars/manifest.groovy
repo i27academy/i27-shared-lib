@@ -64,7 +64,7 @@ def call(Map pipelineParams){
                 steps {
                     echo "Executing in GCP Cloud authentication stage"
                     script{
-                        k8s.gitClone()
+                        k8s.auth_login()
                     }
                 }
             }
